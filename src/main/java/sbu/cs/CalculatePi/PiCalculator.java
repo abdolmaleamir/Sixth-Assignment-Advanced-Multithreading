@@ -1,27 +1,38 @@
 package sbu.cs.CalculatePi;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
+
 public class PiCalculator {
 
-    /**
-     * Calculate pi and represent it as a BigDecimal object with the given floating point number (digits after . )
-     * There are several algorithms designed for calculating pi, it's up to you to decide which one to implement.
-     Experiment with different algorithms to find accurate results.
+    public String calculate(int floatingPoint) {
+        MathContext mc = new MathContext(floatingPoint + 10, RoundingMode.HALF_UP);
+        BigDecimal a = BigDecimal.valueOf(1);
+        BigDecimal b = BigDecimal.valueOf(1).divide(BigDecimal.valueOf(2).sqrt(mc), mc);
+        BigDecimal t = BigDecimal.valueOf(1).divide(BigDecimal.valueOf(4), mc);
+        BigDecimal p = BigDecimal.valueOf(1);
 
-     * You must design a multithreaded program to calculate pi. Creating a thread pool is recommended.
-     * Create as many classes and threads as you need.
-     * Your code must pass all of the test cases provided in the test folder.
+        for (int i = 0; i < floatingPoint * 10; i++) {
+            BigDecimal an = (a.add(b, mc)).divide(BigDecimal.valueOf(2), mc);
+            BigDecimal b2 = (a.multiply(b, mc)).sqrt(mc);
+            BigDecimal tn = t.subtract(p.multiply(BigDecimal.valueOf((a.subtract(an, mc)).pow(2)), mc), mc);
+            BigDecimal pn = p.multiply(BigDecimal.valueOf(2), mc);
 
-     * @param floatingPoint the exact number of digits after the floating point
-     * @return pi in string format (the string representation of the BigDecimal object)
-     */
+            a = an;
+            b = b2;
+            t = tn;
+            p = pn;
+        }
 
-    public String calculate(int floatingPoint)
-    {
-        // TODO
-        return null;
+        return (a.add(b, mc)).pow(2).divide(t, mc).toString();
     }
 
     public static void main(String[] args) {
-        // Use the main function to test the code yourself
+        PiCalculator piCalculator = new PiCalculator();
+        System.out.println(piCalculator.calculate(2));
+        System.out.println(piCalculator.calculate(7));
+        System.out.println(piCalculator.calculate(100));
+        System.out.println(piCalculator.calculate(1000));
     }
 }
